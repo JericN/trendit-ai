@@ -1,67 +1,88 @@
 """Main module for the scraper package."""
 
-
-from os import getenv, path, remove
-from datetime import datetime
-import requests
-import requests.auth
+from os import path, remove
 import pandas as pd
-import numpy as np
-from pprint import pprint
-from time import sleep
+from scraper.api import get_posts
 
 
-SUBREDDIT = "peyups"
-OUTPUT_DIR = "data.csv"
+SUBREDDIT = "Artificial"
+OUTPUT_DIR = "./data/data.csv"
 COMMENT_DIR = "comments.csv"
 
-def get_auth_header():
-    """ Get the authorization header for Reddit API. """
-    return {
-        "Authorization": f"{getenv("TOKEN_TYPE")} {getenv("ACCESS_TOKEN")}",
-        "User-Agent": getenv("USER_AGENT"),
-    }
+attributes = [
+    "subreddit",
+    "name",
+    "created_utc",
+    "permalink",
+    "author_fullname",
+    "link_flair_text",
+    "title",
+    "selftext",
+    "num_comments",
+    "score",
+]
 
-# def fetch_reddit_comments_on():
-#     """ Fetch the latest N posts from a subreddit. """
-#     if path.exists(OUTPUT_DIR):
-#         remove(OUTPUT_DIR)
+# subreddit	id	timestamp	permalink	author	tag	title	body	comments	score
 
-#     headers = get_auth_header()
+new_attributes = [
+    "subreddit",
+    "id",
+    "timestamp",
+    "permalink",
+    "author",
+    "tag",
+    "title",
+    "body",
+    "comments",
+    "score",
+]
 
-def fetch_reddit_posts(count: int)->list:
-    """ Fetch the latest N posts from a subreddit. """
-    if path.exists(COMMENT_DIR):
-        remove(COMMENT_DIR)
 
-    headers = get_auth_header()
+def get_relevant_data(post):
+    """Convert a post to a DataFrame."""
+    data = {key: [post["data"].get(key, "")] for key in attributes}
+    return pd.DataFrame(data)
 
-    after = None
+
+def fetch_reddit_posts(subreddit, header=False, count=11) -> list:
+    """Fetch the latest N posts from a subreddit."""
+
+    paging = "initial"
+    data_list = []
     for i in range(count):
-        print(f"Fetching slice {i+1} of {count}")
-        response = requests.get(
-            f"https://oauth.reddit.com/r/{SUBREDDIT}/hot",
-            headers=headers,
-            timeout=10,
-            params={"limit": 100, "after": after},
-        )
-        res_json = response.json()
-        after = res_json["data"]["after"]
 
-        df = pd.DataFrame()
-        for post in res_json["data"]["children"]:
-            data = post["data"]
-            for key in data.keys():
-                data[key] = [data[key]]
-            ndf = pd.DataFrame(data)
-            df = pd.concat([df, ndf], ignore_index=True)
-        df.to_csv(OUTPUT_DIR, mode='a', index=False, header=True if i == 0 else False)
+        # break if no more posts are available
+        if paging is None:
+            break
+
+        print(f"Fetching {i*100}th data of {subreddit}...")
+
+        # get the latest posts
+        posts = get_posts(subreddit=subreddit, after=paging)
+        # update the paging token
+        paging = posts.get("after")
+
+        # iterate over the posts
+        for post in posts.get("children", []):
+            ndf = get_relevant_data(post)
+            data_list.append(ndf)
+
+    # Concatenate all DataFrame fragments
+    df = pd.concat(data_list, ignore_index=True)
+    df.columns = new_attributes
+    df.to_csv(OUTPUT_DIR, mode="a", index=False, header=header)
 
 
 def reddit_api():
-    """ Get the latest posts from a subreddit. """
-    fetch_reddit_posts(10)
+    """Get the latest posts from a subreddit."""
+
+    if path.exists(OUTPUT_DIR):
+        remove(OUTPUT_DIR)
+
+    fetch_reddit_posts(subreddit="Artificial", header=True)
+    fetch_reddit_posts("ArtificialInteligence")
 
 
 def run_reddit_scraper():
+    """Run the Reddit scraper."""
     reddit_api()
