@@ -79,8 +79,11 @@ def reddit_api():
     if path.exists(OUTPUT_DIR):
         remove(OUTPUT_DIR)
 
-    fetch_reddit_posts(subreddit="Artificial", header=True)
-    fetch_reddit_posts("ArtificialInteligence")
+    fetch_reddit_posts(subreddit="movies", header=True)
+    fetch_reddit_posts("MovieDetails")
+    fetch_reddit_posts("boxoffice")
+    fetch_reddit_posts("Moviesinthemaking")
+    fetch_reddit_posts("Cinema")
 
 
 def run_reddit_scraper():
