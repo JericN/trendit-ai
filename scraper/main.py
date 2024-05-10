@@ -2,7 +2,7 @@
 
 from os import path, remove
 import pandas as pd
-from scraper.api import get_posts
+from scraper.api import get_posts, get_access_token
 
 
 SUBREDDIT = "Artificial"
@@ -84,8 +84,10 @@ def reddit_api():
     fetch_reddit_posts("boxoffice")
     fetch_reddit_posts("Moviesinthemaking")
     fetch_reddit_posts("Cinema")
+    fetch_reddit_posts("netflix")
 
 
 def run_reddit_scraper():
     """Run the Reddit scraper."""
     reddit_api()
+    # get_access_token()
