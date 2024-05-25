@@ -4,5 +4,8 @@
     ],
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true,
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "[svelte]": {
+        "editor.defaultFormatter": "svelte.svelte-vscode"
+    }
 }
