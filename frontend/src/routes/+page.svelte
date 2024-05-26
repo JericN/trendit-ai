@@ -9,8 +9,9 @@
 		if (!subreddit) {
 			error = 'Please enter a subreddit.';
 			return;
+		} else {
+			goto(`/result?subreddit=${encodeURIComponent(subreddit)}`);
 		}
-		goto(`/result?subreddit=${encodeURIComponent(subreddit)}`);
 	}
 </script>
 

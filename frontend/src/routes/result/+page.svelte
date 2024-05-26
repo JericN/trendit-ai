@@ -50,13 +50,13 @@
 					<ListBoxItem
 						bind:group={comboboxValue}
 						name="view"
-						value="monthly"
+						value="month"
 						active="bg-orange-400 text-white">Month</ListBoxItem
 					>
 					<ListBoxItem
 						bind:group={comboboxValue}
 						name="view"
-						value="weekly"
+						value="week"
 						active="bg-orange-400 text-white">Week</ListBoxItem
 					>
 				</ListBox>
