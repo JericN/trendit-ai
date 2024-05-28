@@ -8,6 +8,6 @@
 </script>
 
 <body class="flex flex-col h-screen border-reddit border-2">
-	<header class="text-center p-6 text-reddit font-nova-square text-2xl">TRENDDIT</header>
+	<header class="text-center p-6 text-reddit font-nova-square text-2xl font-bold">TRENDDIT</header>
 	<slot />
 </body>
