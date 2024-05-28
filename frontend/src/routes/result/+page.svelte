@@ -2,14 +2,18 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import RedditIcon from '~icons/logos/reddit-icon';
+	import { getData } from '$lib/database';
 	import { ListBox, ListBoxItem, popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 
 	let subreddit = '';
 
-	onMount(() => {
+	onMount(async () => {
 		const queryParams = new URLSearchParams($page.url.search);
 		subreddit = queryParams.get('subreddit') || 'unknown';
+
+		const data = await getData();
+		console.log(data);
 	});
 
 	let comboboxValue: string;
