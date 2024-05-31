@@ -6,6 +6,7 @@ function transformData(doc: QueryDocumentSnapshot): Topic {
     const data = doc.data()
     const topic: Topic = {
         label: data.label,
+        rank: data.rank,
         rep_docs: data.rep_docs as Docs[],
         keywords: data.keywords
     }
