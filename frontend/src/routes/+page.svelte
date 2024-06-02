@@ -36,6 +36,4 @@
 	{/if}
 </div>
 
-<footer class="text-center p-6 text-black font-nova-square text-lg">
-	Made with BERTopic and ChatGPT4o.
-</footer>
+
