@@ -3,3 +3,5 @@ bertopic
 tiktoken
 firebase-admin
 matplotlib
+praw
+schedule
