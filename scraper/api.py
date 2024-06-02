@@ -8,9 +8,7 @@ from requests import auth
 def get_access_token():
     """Get and print access token from Reddit API."""
 
-    client_auth = auth.HTTPBasicAuth(
-        getenv("CLIENT_ID"), getenv("CLIENT_SECRET")
-    )
+    client_auth = auth.HTTPBasicAuth(getenv("CLIENT_ID"), getenv("CLIENT_SECRET"))
 
     post_data = {
         "grant_type": "password",
@@ -32,15 +30,16 @@ def get_access_token():
 
 
 def get_auth_header():
-    """ Get the authorization header for Reddit API. """
+    """Get the authorization header for Reddit API."""
     return {
-        "Authorization": f"{getenv("TOKEN_TYPE")} {getenv("ACCESS_TOKEN")}",
+        "Authorization": f"{getenv('TOKEN_TYPE')} {getenv('ACCESS_TOKEN')}",
         "User-Agent": getenv("USER_AGENT"),
     }
 
+
 def get_posts(subreddit, after=None, limit=100):
-    """ Get the latest posts from a subreddit. """
-    after = None if after == 'initial' else after
+    """Get the latest posts from a subreddit."""
+    after = None if after == "initial" else after
 
     api_url = f"https://oauth.reddit.com/r/{subreddit}/new"
     headers = get_auth_header()
@@ -55,5 +54,5 @@ def get_posts(subreddit, after=None, limit=100):
 
     response.raise_for_status()
     response_json = response.json()
-    
+
     return response_json["data"]
