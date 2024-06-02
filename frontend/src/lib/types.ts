@@ -5,6 +5,7 @@ export interface Docs {
 
 export interface Topic {
     label: string;
+    rank: number;
     rep_docs: Docs[];
     keywords: string[];
 }

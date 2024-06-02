@@ -80,11 +80,6 @@ def reddit_api():
         remove(OUTPUT_DIR)
 
     fetch_reddit_posts(subreddit="ArtificialInteligence", header=True)
-    fetch_reddit_posts("learnmachinelearning")
-    fetch_reddit_posts("MachineLearning")
-    fetch_reddit_posts("artificial")
-    fetch_reddit_posts("deeplearning")
-    fetch_reddit_posts("OpenAI")
 
 
 def run_reddit_scraper():
