@@ -10,6 +10,7 @@
 {#if $modalStore[0]}
 	<div class="h-full max-w-xl bg-slate-600 px-8 py-6 rounded-xl text-white">
 		<div class="font-bold text-lg text-reddit mb-2">Representative Posts</div>
+		<div class="text-sm mb-4">{$modalStore[0].meta.topic.label}</div>
 		<ol class="list-disc ml-6">
 			{#each $modalStore[0].meta.topic.rep_docs as doc}
 				<li class="mb-2">
