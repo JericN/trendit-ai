@@ -49,7 +49,7 @@ class RedditClient:
     def get_weekly_posts(self, subreddit_name: str) -> pd.DataFrame:
         """Fetches posts from the past week from a specified subreddit"""
         subreddit = self.reddit.subreddit(subreddit_name)
-        cutoff_date = datetime.now() - timedelta(days=17)
+        cutoff_date = datetime.now() - timedelta(days=7)
         posts_df = pd.DataFrame(columns=attributes)
 
         for submission in subreddit.new(limit=10000):

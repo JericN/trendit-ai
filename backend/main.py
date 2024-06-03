@@ -31,13 +31,15 @@ def run_monthly_model():
     model = Model()
     data = model.fit_transform("gaming")
     print(data)
+    # save to firebase
+    # delete data
 
     print("[INFO] Job completed: Model run successful!")
 
 
 if __name__ == "__main__":
     schedule.every().monday.at("12:00").do(scrape_weekly_reddit)
-    schedule.every().weeks.do(run_monthly_model)
+    schedule.every(4).weeks.do(run_monthly_model)
 
     # Run the jobs immediately for now
     schedule.run_all(delay_seconds=5)
