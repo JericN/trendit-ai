@@ -18,7 +18,7 @@ from hdbscan import HDBSCAN
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from bertopic import BERTopic
-from bertopic.representation import KeyBERTInspired, OpenAI
+from bertopic.representation import KeyBERTInspired, OpenAI, PartOfSpeech
 from bertopic.vectorizers import ClassTfidfTransformer
 
 PROMPT = """
@@ -30,7 +30,7 @@ I have a topic that contains the following documents:
  - Meat, but especially beef, is the word food in terms of emissions.
  - Eating meat doesn't make you a bad person, not eating meat doesn't make you a good one.
 The topic is described by the following keywords: 'meat, beef, eat, eating, emissions, steak, food, health, processed, chicken'.
-Based on the information about the topic above, please create a short label of this topic. Make sure you to only return the label and nothing more.
+Based on the information about the topic above, please create a short but broad and highly encompassing label of this topic, focus on the keywords. Make sure you to only return the label and nothing more.
 
 Your reply as the assistant is:
 topic: Environmental impacts of eating meat.
@@ -40,7 +40,7 @@ I have a topic that contains the following documents:
 [DOCUMENTS]
 The topic is described by the following keywords: [KEYWORDS]
 
-Based on the information above, extract a short but highly descriptive topic label of at most 10 words. Make sure it is in the following format:
+Based on the information above, extract a short yet highly encompassing topic label of at most 10 words. Make sure it is in the following format:
 topic: <topic label>
 """
 
@@ -55,7 +55,7 @@ class Model:
         return UMAP(n_neighbors=5, n_components=3, min_dist=0.0, metric="cosine", random_state=21522)
 
     def _init_clustering_layer(self):
-        return HDBSCAN(min_cluster_size=20, min_samples=1, metric="euclidean", cluster_selection_method="leaf", prediction_data=True)
+        return HDBSCAN(min_cluster_size=15, min_samples=1, metric="euclidean", cluster_selection_method="leaf", prediction_data=True)
 
     def _init_vectorizer_layer(self):
         return CountVectorizer(stop_words="english", min_df=2, ngram_range=(1, 2))
@@ -65,11 +65,13 @@ class Model:
 
     def _init_topic_finetuning_layer(self, openai_client):
         keybert_model = KeyBERTInspired(top_n_words=10)
+        pos_model = PartOfSpeech(top_n_words=10, model="en_core_web_sm")
         openai_tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo")
         openai_model = OpenAI(openai_client, model="gpt-3.5-turbo", exponential_backoff=True, chat=True, prompt=PROMPT, nr_docs=10, doc_length=200, tokenizer=openai_tokenizer)
         return {
             "KeyBERT": keybert_model,
-            "OpenAI": [keybert_model, openai_model],
+            "POS": pos_model,
+            "OpenAI": [pos_model, openai_model],
         }
 
     def __init__(self):
@@ -126,7 +128,7 @@ class Model:
         for i in range(num_topics):
             topics = self.model.get_topic(i, full=True)
             label = topics["OpenAI"][0][0]
-            keywords = [topics["KeyBERT"][j][0] for j in range(10)]
+            keywords = [topics["POS"][j][0] for j in range(10)]
             doc_count = self.model.get_topic_freq(i)
             rep_docs = [{"content": data.loc[data["doc"] == doc, "title"].values[0], "url": base_url + data.loc[data["doc"] == doc, "permalink"].values[0]} for doc in repdocs[i]]
 
@@ -138,8 +140,12 @@ class Model:
 
     def generate_monthly_result(self, subreddit: str) -> Dict:
         """Fit the model on the scraped data"""
-
-        data = read_subreddit_posts(subreddit)
+        # if subreddit is funny&gaming, split this and read the data and combine
+        if "&" in subreddit:
+            subreddits = subreddit.split("&")
+            data = pd.concat([read_subreddit_posts(subreddit) for subreddit in subreddits])
+        else:
+            data = read_subreddit_posts(subreddit)
         print("[MODEL] Preprocessing data")
         data, titles, docs = self._preprocess_data(data)
 
@@ -155,7 +161,7 @@ class Model:
         print("[MODEL] Getting results")
         topics_data = self._get_topics_data(data, repr_docs)
 
-        date = datetime.now().strftime("%B %Y")
-        doc_count = len(docs)
+        date = "May 2024"
+        doc_count = len(data)
 
         return {"date": date, "doc_count": doc_count, "topics": topics_data}

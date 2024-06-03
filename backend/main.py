@@ -29,6 +29,9 @@ def scrape_weekly_reddit():
     # Scrape each subreddit and write to CSV
     for index, subreddit in enumerate(subreddits, start=1):
         print(f"[INFO] ({index}/{len(subreddits)}) Scraping {subreddit}...")
+        if "&" in subreddit:
+            print("[INFO] Subreddit contains '&'. Skipping...")
+            continue
         weekly_posts = reddit.get_weekly_posts(subreddit)
         write_to_csv(weekly_posts, f"./data/{subreddit}.csv")
 
@@ -40,7 +43,7 @@ def run_monthly_model():
 
     if not is_last_day_of_month():
         print("[INFO] Job skipped: Not the last day of the month.")
-        return
+        # return
 
     print("[INFO] Job started: Running model...")
 
@@ -57,8 +60,8 @@ def run_monthly_model():
 
 
 if __name__ == "__main__":
-    schedule.every().monday.at("12:00").do(scrape_weekly_reddit)
-    schedule.every().day.at("12:00").do(run_monthly_model)
+    # schedule.every().monday.at("12:00").do(scrape_weekly_reddit)
+    schedule.every().day.at("23:00").do(run_monthly_model)
 
     # Run the jobs immediately for now
     schedule.run_all(delay_seconds=5)
