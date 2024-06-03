@@ -6,6 +6,8 @@ import pandas as pd
 from os import getenv
 from dotenv import load_dotenv
 import re
+from datetime import datetime
+from typing import List, Dict
 
 # OpenAI Library
 import torch
@@ -104,16 +106,56 @@ class Model:
         data["doc"] = data["doc"].str.replace(r" +", " ")
         data["doc"] = data["doc"].str.strip()
 
-        return (data["title"], data["doc"])
+        return (data, data["title"], data["doc"])
 
-    def fit_transform(self, subreddit: str) -> pd.DataFrame:
+    def _change_topic_labels(self):
+        chatgpt_topic_labels = {topic: " | ".join(list(zip(*values))[0]) for topic, values in self.model.topic_aspects_["OpenAI"].items()}
+        chatgpt_topic_labels[-1] = "Outlier Topic"
+        self.model.set_topic_labels(chatgpt_topic_labels)
+
+    def _extract_rep_docs(self, docs, n=10) -> pd.DataFrame:
+        documents = pd.DataFrame({"Document": docs, "ID": range(len(docs)), "Topic": self.model.topics_})
+        repr_docs, a, b, c = self.model._extract_representative_docs(c_tf_idf=self.model.c_tf_idf_, documents=documents, topics=self.model.topic_representations_, nr_repr_docs=n)
+        return repr_docs
+
+    def _get_topics_data(self, data: pd.DataFrame, repdocs: pd.DataFrame) -> List[Dict]:
+        base_url = "https://www.reddit.com"
+        all_topics_data = []
+        num_topics = min(10, len(self.model.get_topic_info()) - 1)
+
+        for i in range(num_topics):
+            topics = self.model.get_topic(i, full=True)
+            label = topics["OpenAI"][0][0]
+            keywords = [topics["KeyBERT"][j][0] for j in range(num_topics)]
+            doc_count = self.model.get_topic_freq(i)
+            rep_docs = [{"content": data.loc[data["doc"] == doc, "title"].values[0], "url": base_url + data.loc[data["doc"] == doc, "permalink"].values[0]} for doc in repdocs[i]]
+
+            # Append the topic data to the results list
+            topic_data = {"label": label, "keywords": keywords, "doc_count": doc_count, "rep_docs": rep_docs}
+            all_topics_data.append(topic_data)
+
+        return all_topics_data
+
+    def generate_monthly_result(self, subreddit: str) -> Dict:
         """Fit the model on the scraped data"""
 
         data = read_subreddit_posts(subreddit)
-        print(data)
-        titles, docs = self._preprocess_data(data)
+        print("[MODEL] Preprocessing data")
+        data, titles, docs = self._preprocess_data(data)
+
+        print("[MODEL] Fitting model")
         topics, probs = self.model.fit_transform(docs)
-        print(topics)
-        print(probs)
-        print(self.model.get_topic_info())
-        return self.model.get_topic_info()
+
+        print("[MODEL] Changing topic labels")
+        self._change_topic_labels()
+
+        print("[MODEL] Extracting representative documents")
+        repr_docs = self._extract_rep_docs(docs)
+
+        print("[MODEL] Getting results")
+        topics_data = self._get_topics_data(data, repr_docs)
+
+        date = datetime.now().strftime("%B %Y")
+        doc_count = len(docs)
+
+        return {"date": date, "doc_count": doc_count, "topics": topics_data}

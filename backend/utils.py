@@ -18,6 +18,7 @@ def read_subreddit_list() -> list[str]:
         return [sub.strip() for sub in file.readlines()]
 
 
+# FIXME: only read the post last month
 def read_subreddit_posts(subreddit: str) -> pd.DataFrame:
     """Reads posts from a CSV file"""
     return pd.read_csv(f"./data/{subreddit}.csv")
