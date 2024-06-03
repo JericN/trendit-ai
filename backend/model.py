@@ -1,5 +1,7 @@
 """Model class for the BERTopic model"""
 
+from utils import read_subreddit_posts
+
 import pandas as pd
 from os import getenv
 from dotenv import load_dotenv
@@ -62,7 +64,7 @@ class Model:
     def _init_topic_finetuning_layer(self, openai_client):
         keybert_model = KeyBERTInspired(top_n_words=10)
         openai_tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo")
-        openai_model = OpenAI(openai_client, model="gpt-3.5-turbo", exponential_backoff=True, chat=True, prompt=PROMPT, nr_docs=10, doc_length=500, tokenizer=openai_tokenizer)
+        openai_model = OpenAI(openai_client, model="gpt-3.5-turbo", exponential_backoff=True, chat=True, prompt=PROMPT, nr_docs=10, doc_length=200, tokenizer=openai_tokenizer)
         return {
             "KeyBERT": keybert_model,
             "OpenAI": [keybert_model, openai_model],
@@ -80,7 +82,7 @@ class Model:
             ctfidf_model=self._init_topic_representation_layer(),
             representation_model=self._init_topic_finetuning_layer(openai_client),
             top_n_words=10,
-            verbose=False,
+            verbose=True,
         )
 
         response = openai_client.chat.completions.create(
@@ -93,10 +95,25 @@ class Model:
 
         print("[MODEL] ", response.choices[0].message.content)
 
-    def preprocess(self, text: str) -> str: ...
+    def _preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Import the scraped data"""
 
-    def fit(self, subreddit: str) -> pd.DataFrame:
+        data.fillna("", inplace=True)
+        data["doc"] = data.apply(lambda row: f"{row['title']} {row['body']}", axis=1)
+        data["doc"] = data["doc"].str.replace(r"(http|www)\S+", "", regex=True)
+        data["doc"] = data["doc"].str.replace(r" +", " ")
+        data["doc"] = data["doc"].str.strip()
+
+        return (data["title"], data["doc"])
+
+    def fit_transform(self, subreddit: str) -> pd.DataFrame:
         """Fit the model on the scraped data"""
-        data = pd.read_csv(f"./data/{subreddit}.csv")
-        # self.model.fit_transform(data.body)
-        return data
+
+        data = read_subreddit_posts(subreddit)
+        print(data)
+        titles, docs = self._preprocess_data(data)
+        topics, probs = self.model.fit_transform(docs)
+        print(topics)
+        print(probs)
+        print(self.model.get_topic_info())
+        return self.model.get_topic_info()
