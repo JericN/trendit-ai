@@ -25,6 +25,8 @@ class FirebaseClient:
             for topic in data["topics"]:
                 self.db.collection(subreddit).document(doc_ref.id).collection("topics").add(topic)
 
+            self.db.collection("admin_subreddit_collections").document(subreddit).set({"updated_at": firestore.SERVER_TIMESTAMP})
+
             print(f"[INFO] Document added to collection {subreddit}")
         except Exception as _:
             print(f"[Error] Failed uploading data for {subreddit}")

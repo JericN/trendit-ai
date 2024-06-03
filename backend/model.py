@@ -161,7 +161,7 @@ class Model:
         print("[MODEL] Getting results")
         topics_data = self._get_topics_data(data, repr_docs)
 
-        date = "May 2024"
+        date = "April 2024"
         doc_count = len(data)
 
         return {"date": date, "doc_count": doc_count, "topics": topics_data}
