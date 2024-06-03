@@ -17,8 +17,8 @@ def scrape_weekly_reddit():
     # Scrape each subreddit and write to CSV
     for index, subreddit in enumerate(subreddits, start=1):
         print(f"[INFO] ({index}/{len(subreddits)}) Scraping {subreddit}...")
-        # weekly_posts = reddit.get_weekly_posts(subreddit)
-        # write_to_csv(weekly_posts, f"./data/{subreddit}.csv")
+        weekly_posts = reddit.get_weekly_posts(subreddit)
+        write_to_csv(weekly_posts, f"./data/{subreddit}.csv")
 
     print("[INFO] Job completed: Scraping successful!")
 
@@ -28,7 +28,9 @@ def run_monthly_model():
 
     print("[INFO] Job started: Running model...")
 
-    # model = Model()
+    model = Model()
+    data = model.fit_transform("gaming")
+    print(data)
 
     print("[INFO] Job completed: Model run successful!")
 

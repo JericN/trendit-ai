@@ -16,3 +16,8 @@ def read_subreddit_list() -> list[str]:
     """Reads a list of subreddits from a file"""
     with open("subreddits.txt", "r", encoding="utf-8") as file:
         return [sub.strip() for sub in file.readlines()]
+
+
+def read_subreddit_posts(subreddit: str) -> pd.DataFrame:
+    """Reads posts from a CSV file"""
+    return pd.read_csv(f"./data/{subreddit}.csv")
