@@ -15,12 +15,12 @@
 	}
 </script>
 
-<div class="flex flex-col grow justify-center items-center gap-10">
+<div class="flex flex-col h-full justify-center gap-8">
 	<div class="font-nova-square text-center text-5xl">
 		Explore Top Discussions
 		<br />from <span class="text-reddit">Subreddits.</span>
 	</div>
-	<div class="font-chivo bg-reddit input-group input-group-divider grid-cols-[2fr_auto] w-1/5">
+	<div class="font-chivo bg-reddit input-group input-group-divider grid-cols-[2fr_auto] w-full">
 		<input
 			type="text"
 			class="text-white text-lg px-6 placeholder:text-slate-200"
@@ -35,5 +35,3 @@
 		<div class="text-red-500 font-chivo">{error}</div>
 	{/if}
 </div>
-
-

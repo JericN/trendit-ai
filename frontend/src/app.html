@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&family=Nova+Square&display=swap"
+			rel="stylesheet"
+		/>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
+		%sveltekit.head%
+	</head>
 
-<head>
-	<meta charset="utf-8" />
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link
-		href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&family=Nova+Square&display=swap"
-		rel="stylesheet">
-	<meta name="viewport" content="width=device-width" />
-	%sveltekit.head%
-</head>
-
-<body data-sveltekit-preload-data="hover" data-theme="Trenddit">
-	<div style="display: contents" class="h-full overflow-hidden">%sveltekit.body%</div>
-</body>
-
+	<body class="h-screen overflow-hidden" data-theme="Trenddit" data-sveltekit-preload-data="hover">
+		<div class="contents h-full">%sveltekit.body%</div>
+	</body>
 </html>
