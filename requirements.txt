@@ -6,8 +6,3 @@ matplotlib
 praw
 schedule
 python-dotenv
-
-results = {'label': 'Disliking Popular Games and Game Genres', 
-            'rank': 1, 
-            'rep_docs': [], 
-            'keywords': ['hardcore', 'mountain', 'genre just', 'minecraft', 'say', 'disappointed', 'told', 'post', 'villains', 'community']}

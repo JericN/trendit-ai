@@ -126,7 +126,7 @@ class Model:
         for i in range(num_topics):
             topics = self.model.get_topic(i, full=True)
             label = topics["OpenAI"][0][0]
-            keywords = [topics["KeyBERT"][j][0] for j in range(num_topics)]
+            keywords = [topics["KeyBERT"][j][0] for j in range(10)]
             doc_count = self.model.get_topic_freq(i)
             rep_docs = [{"content": data.loc[data["doc"] == doc, "title"].values[0], "url": base_url + data.loc[data["doc"] == doc, "permalink"].values[0]} for doc in repdocs[i]]
 
