@@ -4,13 +4,14 @@
 	import Name from './Name.svelte';
 	import Group from './Group.svelte';
 
-	const modalStore = getModalStore();
+
 
 	export let data;
 	$: ({ monthlyTopics, subreddit } = data);
 
 	let comboboxValue: string;
-
+	
+	const modalStore = getModalStore();
 	const modalComponent: ModalComponent = {
 		ref: DocModal
 	};

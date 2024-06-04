@@ -1,1 +1,12 @@
+AskReddit
+sports
+movies
+boxoffice
+NetflixBestOf
+movies&boxoffice&NetflixBestOf
 worldnews
+news
+worldnews&news
+ArtificialInteligence
+MachineLearning
+artificial
