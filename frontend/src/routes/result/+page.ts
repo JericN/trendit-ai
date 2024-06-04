@@ -9,7 +9,9 @@ export async function load({ url }) {
 		throw new Error('No subreddit provided');
 	}
 
-	const monthlyTopics = await getData(subreddit);
+	const formattedSubreddit = subreddit.split(',').join('&');
+
+	const monthlyTopics = await getData(formattedSubreddit);
 	console.log(monthlyTopics);
 
 	return { monthlyTopics, subreddit };
