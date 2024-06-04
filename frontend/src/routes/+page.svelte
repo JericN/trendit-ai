@@ -2,6 +2,8 @@
 	import Submit from '~icons/formkit/submit';
 	import { goto } from '$app/navigation';
 	import { InputChip } from '@skeletonlabs/skeleton';
+	import { type ModalSettings, type ModalComponent, getModalStore } from '@skeletonlabs/skeleton';
+	import DocModal from './DocModal.svelte';
 	let error = '';
 
 	function handleSubmit() {
@@ -12,13 +14,30 @@
 			goto(`/result?subreddit=${encodeURIComponent(subreddits.toString())}`);
 		}
 	}
-	let subreddits: string[] = ['MachineLearning'];
+	let subreddits: string[] = [];
+
+	const modalStore = getModalStore();
+	const modalComponent: ModalComponent = {
+		ref: DocModal
+	};
+
+	const modal: ModalSettings = {
+		type: 'component',
+		component: modalComponent
+	};
+
+	function openDocuments() {
+		modalStore.trigger({
+			type: 'component',
+			component: modalComponent
+		});
+	}
 </script>
 
 <div class="flex flex-col h-full justify-center items-center gap-20">
 	<div class="font-nova-square text-center text-5xl">
 		Explore Top Discussions
-		<br />from <span class="text-reddit">Subreddits.</span>
+		<br />from <button on:click={openDocuments} class="text-reddit">Subreddits.</button>
 	</div>
 	<div class="flex w-full max-w-sm">
 		<InputChip
