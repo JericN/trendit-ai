@@ -60,7 +60,7 @@ def run_monthly_model():
 
 
 if __name__ == "__main__":
-    # schedule.every().monday.at("12:00").do(scrape_weekly_reddit)
+    schedule.every().monday.at("12:00").do(scrape_weekly_reddit)
     schedule.every().day.at("23:00").do(run_monthly_model)
 
     # Run the jobs immediately for now

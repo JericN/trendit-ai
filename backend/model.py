@@ -52,7 +52,7 @@ class Model:
         return SentenceTransformer("thenlper/gte-small", trust_remote_code=True)
 
     def _init_dimensionality_reduction_layer(self):
-        return UMAP(n_neighbors=5, n_components=3, min_dist=0.0, metric="cosine", random_state=21522)
+        return UMAP(n_neighbors=10, n_components=5, min_dist=0.0, metric="cosine", random_state=21522)
 
     def _init_clustering_layer(self):
         return HDBSCAN(min_cluster_size=15, min_samples=1, metric="euclidean", cluster_selection_method="leaf", prediction_data=True)
@@ -161,7 +161,7 @@ class Model:
         print("[MODEL] Getting results")
         topics_data = self._get_topics_data(data, repr_docs)
 
-        date = "April 2024"
+        date = "May 2024"
         doc_count = len(data)
 
         return {"date": date, "doc_count": doc_count, "topics": topics_data}
