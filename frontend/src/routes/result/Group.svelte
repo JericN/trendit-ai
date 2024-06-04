@@ -13,7 +13,7 @@
 </script>
 
 <div>
-	<button class="btn bg-reddit text-base text-white w-48 justify-between" use:popup={popupCombobox}>
+	<button class="btn bg-reddit text-base text-white w-28 justify-between" use:popup={popupCombobox}>
 		<span class="capitalize">{comboboxValue ?? 'View by'}</span>
 		<span>↓</span>
 	</button>
@@ -31,6 +31,12 @@
 				name="view"
 				value="week"
 				active="bg-orange-400 text-white">Week</ListBoxItem
+			>
+			<ListBoxItem
+				bind:group={comboboxValue}
+				name="view"
+				value="year"
+				active="bg-orange-400 text-white">Year</ListBoxItem
 			>
 		</ListBox>
 		<div class="arrow bg-surface-100-800-token" />
